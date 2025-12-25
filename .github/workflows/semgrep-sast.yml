@@ -1,0 +1,29 @@
+name: Semgrep SAST Scan
+
+on:
+  push:
+    branches: [ main, master, develop ]
+  pull_request:
+    branches: [ main, master, develop ]
+
+jobs:
+  semgrep-sast:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      
+    - name: Run Semgrep SAST Scan
+      uses: returntocorp/semgrep-action@v1
+      with:
+        publishToken: ${{ secrets.SEMGREP_APP_TOKEN }}
+        publishDeployment: ${{ github.event_name == 'push' }}
+      env:
+        SEMGREP_APP_TOKEN: ${{ secrets.SEMGREP_APP_TOKEN }}
+        
+    - name: Display results summary
+      run: |
+        echo "Semgrep SAST scan completed!"
+        echo "Check the summary above for security findings."
+
